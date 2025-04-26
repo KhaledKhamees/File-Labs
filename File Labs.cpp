@@ -2,7 +2,7 @@
 #include <fstream>
 using namespace std; 
 
-
+#pragma region Lab 3
 void Writing_in_File() {
     ofstream file; // 1. Create an output file stream object.
 
@@ -52,6 +52,98 @@ void Reading_from_File() {
     delete[] Line; // 10. Important! Free the allocated memory.
     file.close();  // 11. Close the file.
 }
+
+#pragma endregion
+
+#pragma region Fixed Length
+struct student {
+    int Id;
+    char Name[20];
+    float Price;
+    int Qun;
+};
+
+void AddStudent(fstream& file) {
+    student s;
+    cout << "Enter student data:\n";
+    cout << "ID: ";
+    cin >> s.Id;
+    cin.ignore();
+    cout << "Name: ";
+    cin.getline(s.Name, 20);
+    cout << "Price: ";
+    cin >> s.Price;
+    cout << "Quantity: ";
+    cin >> s.Qun;
+
+    // Move to end of file (append)
+    file.seekp(0, ios::end);
+    file.write((char*)&s, sizeof(s));
+}
+
+// Function to update by **record index** (0-based)
+void UpdateByIndex(fstream& file, int index) {
+    student s;
+
+    // Go to correct position
+    file.seekg(index * sizeof(s), ios::beg);
+    file.read((char*)&s, sizeof(s));
+
+    // Check if record is valid
+    if (s.Id == -1) {
+        cout << "Record not found or deleted.\n";
+        return;
+    }
+
+    cout << "Current data:\n";
+    cout << "ID: " << s.Id << "\nName: " << s.Name << "\nPrice: " << s.Price << "\nQuantity: " << s.Qun << endl;
+
+    // Update record
+    cout << "Enter new data:\n";
+    cin.ignore();
+    cout << "Name: ";
+    cin.getline(s.Name, 20);
+    cout << "Price: ";
+    cin >> s.Price;
+    cout << "Quantity: ";
+    cin >> s.Qun;
+
+    // Move back to correct write position
+    file.seekp(index * sizeof(s), ios::beg);
+    file.write((char*)&s, sizeof(s));
+
+    cout << "Record updated successfully.\n";
+}
+
+// Function to delete by **record index** (logical delete)
+void DeleteByIndex(fstream& file, int index) {
+    student s;
+
+    // Go to correct position
+    file.seekg(index * sizeof(s), ios::beg);
+    file.read((char*)&s, sizeof(s));
+
+    // Check if record is valid
+    if (s.Id == -1) {
+        cout << "Record not found or already deleted.\n";
+        return;
+    }
+
+    cout << "Current data:\n";
+    cout << "ID: " << s.Id << "\nName: " << s.Name << "\nPrice: " << s.Price << "\nQuantity: " << s.Qun << endl;
+
+    // Logical delete by setting Id to -1
+    s.Id = -1;
+
+    file.seekp(index * sizeof(s), ios::beg);
+    file.write((char*)&s, sizeof(s));
+
+    cout << "Record deleted successfully.\n";
+}
+
+
+
+#pragma endregion
 
 
 
