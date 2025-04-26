@@ -140,17 +140,61 @@ void DeleteByIndex(fstream& file, int index) {
 
     cout << "Record deleted successfully.\n";
 }
-
-
-
 #pragma endregion
 
 
 
 int main()
 {
-    Writing_in_File();
-    Reading_from_File();
+    /*Writing_in_File();
+    Reading_from_File();*/
+
+    fstream file;
+    file.open("students.dat", ios::in | ios::out | ios::binary); // Open file in read/write mode
+
+    if (!file) {
+        cout << "File could not be opened!\n";
+        return 1;
+    }
+
+    int choice;
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Add student\n";
+        cout << "2. Update student by index\n";
+        cout << "3. Delete student by index\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            AddStudent(file);
+            break;
+        case 2: {
+            int index;
+            cout << "Enter index of student to update: ";
+            cin >> index;
+            UpdateByIndex(file, index);
+            break;
+        }
+        case 3: {
+            int index;
+            cout << "Enter index of student to delete: ";
+            cin >> index;
+            DeleteByIndex(file, index);
+            break;
+        }
+        case 4:
+            cout << "Exiting...\n";
+            break;
+        default:
+            cout << "Invalid choice. Try again.\n";
+        }
+    } while (choice != 4);
+
+    file.close();
+    return 0;
 }
 
 
